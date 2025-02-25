@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Цитатник</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #fff;
+        }
+        .quote-input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .add-btn {
+            background: #2ea44f;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .quote-list {
+            margin-top: 20px;
+        }
+        .quote-item {
+            background: #f8f9fa;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .quote-text {
+            flex-grow: 1;
+            margin-right: 10px;
+        }
+        .edit-input {
+            flex-grow: 1;
+            padding: 5px;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <input type="text" class="quote-input" placeholder="Добавить новую цитату..." id="newQuote">
+    <button class="add-btn" onclick="addQuote()">Добавить</button>
+    <div class="quote-list" id="quoteList"></div>
+
+    <script>
+        // Загрузка цитат из localStorage
+        let quotes = JSON.parse(localStorage.getItem('quotes')) || [];
+
+        function saveQuotes() {
+            localStorage.setItem('quotes', JSON.stringify(quotes));
+        }
+
+        function addQuote() {
+            const input = document.getElementById('newQuote');
+            const text = input.value.trim();
+            if (text) {
+                quotes.push(text);
+                saveQuotes();
+                input.value = '';
+                renderQuotes();
+            }
+        }
+
+        function deleteQuote(index) {
+            quotes.splice(index, 1);
+            saveQuotes();
+            renderQuotes();
+        }
+
+        function editQuote(index) {
+            const newText = prompt('Редактировать цитату:', quotes[index]);
+            if (newText !== null) {
+                quotes[index] = newText.trim();
+                saveQuotes();
+                renderQuotes();
+            }
+        }
+
+        function renderQuotes() {
+            const list = document.getElementById('quoteList');
+            list.innerHTML = quotes.map((quote, index) => `
+                <div class="quote-item">
+                    <span class="quote-text">${quote}</span>
+                    <div>
+                        <button onclick="editQuote(${index})">✏️</button>
+                        <button onclick="deleteQuote(${index})">🗑️</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Первоначальная загрузка
+        renderQuotes();
+    </script>
+</body>
+</html>
